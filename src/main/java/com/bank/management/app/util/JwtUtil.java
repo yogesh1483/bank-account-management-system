@@ -22,7 +22,7 @@ public class JwtUtil {
 
     private final CustomerRepository customerRepository;
 
-    private String jwtSecret;
+    private String jwtSecret = "bXlTdXBlclNlY3JldEtleUZvckpXVEJhbmtBcHAxMjM0NTY3ODkw";
     private final long jwtExpirationDate = 3600000; // 1 hour
 
     @PostConstruct

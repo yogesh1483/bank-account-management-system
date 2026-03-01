@@ -16,6 +16,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @RequiredArgsConstructor
+@EnableMethodSecurity
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter authenticationFilter;
@@ -36,13 +37,26 @@ public class SecurityConfig {
                 )
 
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/customers/createCustomer").anonymous()
+
+                        // Public APIs
                         .requestMatchers(
                                 "/api/auth/**",
                                 "/swagger-ui.html",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**"
                         ).permitAll()
+
+                        // ADMIN only
+                        .requestMatchers("/api/customers/createCustomer")
+                        .hasRole("ADMIN")
+
+                        .requestMatchers("/api/customers/**")
+                        .hasAnyRole("ADMIN","CUSTOMER")
+
+                        // CUSTOMER + ADMIN
+                        .requestMatchers("/api/accounts/**")
+                        .hasAnyRole("ADMIN","CUSTOMER")
+
                         .anyRequest().authenticated()
                 )
 

@@ -8,29 +8,39 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 @NoArgsConstructor
 public class SecurityUtils {
-    /**
-     * Returns the username of the currently logged-in user
-     *
-     * @return username
-     * @throws AccessDeniedException if user is not authenticated
-     */
-
     public static String getCurrentUsername() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new AccessDeniedException("User is not authenticated");
-        }
+        Authentication auth =
+                SecurityContextHolder.getContext().getAuthentication();
 
-        return authentication.getName();
+        if (auth == null || !auth.isAuthenticated())
+            return null;
+
+        return auth.getName();
     }
 
-    // 🎭 ROLE
+
     public static String getCurrentUserRole() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null || !auth.isAuthenticated()) return null;
 
-        return auth.getAuthorities().stream().map(GrantedAuthority::getAuthority).findFirst().orElse(null);
+        Authentication auth =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        return auth.getAuthorities()
+                .stream()
+                .findFirst()
+                .map(GrantedAuthority::getAuthority)
+                .orElse(null);
     }
 
+
+    public static boolean isAdmin() {
+
+        return "ROLE_ADMIN".equals(getCurrentUserRole());
+    }
+
+
+    public static boolean isCustomer() {
+
+        return "ROLE_CUSTOMER".equals(getCurrentUserRole());
+    }
 }
